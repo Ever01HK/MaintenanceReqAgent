@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using MaintenanceAgent.Api.Data;
 using MaintenanceAgent.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,14 @@ public class AgentHttpIntegrationTests
         Assert.Equal(
             HttpStatusCode.Conflict,
             secondResponse.StatusCode);
+
+        using var conflictJson = await secondResponse.Content
+            .ReadFromJsonAsync<JsonDocument>();
+
+        Assert.NotNull(conflictJson);
+        Assert.Equal(
+            "The idempotency key has already been used for a different request.",
+            conflictJson.RootElement.GetProperty("error").GetString());
 
         var approvals = await db.MaintenanceApprovals
             .Where(x => x.IdempotencyKey == idempotencyKey)

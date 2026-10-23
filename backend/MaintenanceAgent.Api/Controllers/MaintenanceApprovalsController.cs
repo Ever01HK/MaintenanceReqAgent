@@ -161,4 +161,46 @@ public class MaintenanceApprovalsController : ControllerBase
             status = "Rejected"
         });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> List(
+        [FromQuery] string? status,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken ct = default)
+    {
+        if (page < 1 || pageSize < 1 || pageSize > 100)
+            return BadRequest(new { message = "Page must be >= 1 and pageSize must be between 1 and 100." });
+
+        if (!string.IsNullOrWhiteSpace(status) &&
+            status != "Pending" && status != "Approved" && status != "Rejected")
+            return BadRequest(new { message = "Status must be Pending, Approved or Rejected." });
+
+        var query = _db.MaintenanceApprovals.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(status))
+            query = query.Where(x => x.Status == status);
+
+        var totalCount = await query.CountAsync(ct);
+        var items = await query
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => new
+            {
+                x.Id,
+                x.PropertyId,
+                x.Description,
+                x.Category,
+                x.Priority,
+                x.Status,
+                x.MaintenanceRequestId,
+                x.CreatedAt,
+                x.ReviewedAt
+            })
+            .ToListAsync(ct);
+
+        return Ok(new { items, totalCount, page, pageSize });
+    }
+
 }

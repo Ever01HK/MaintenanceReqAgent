@@ -104,6 +104,20 @@ public class ApprovalWorkflowIntegrationTests
             HttpStatusCode.Conflict,
             secondResponse.StatusCode);
 
+        using var conflictJson = await secondResponse.Content
+            .ReadFromJsonAsync<JsonDocument>();
+
+        Assert.NotNull(conflictJson);
+
+        var conflictRoot = conflictJson.RootElement;
+
+        Assert.Equal(
+            "This approval has already been processed.",
+            conflictRoot.GetProperty("message").GetString());
+        Assert.Equal("Approved", conflictRoot.GetProperty("status").GetString());
+        Assert.True(conflictRoot.TryGetProperty("maintenanceRequestId", out var requestIdElement));
+        Assert.Equal(request.Id, requestIdElement.GetInt32());
+
         // Ensure no duplicate request was created
         var requestCount = await db.MaintenanceRequests
             .AsNoTracking()
@@ -159,6 +173,14 @@ public class ApprovalWorkflowIntegrationTests
         Assert.Equal(
             HttpStatusCode.Conflict,
             secondResponse.StatusCode);
+
+        using var rejectConflictJson = await secondResponse.Content
+            .ReadFromJsonAsync<JsonDocument>();
+
+        Assert.NotNull(rejectConflictJson);
+        Assert.Equal(
+            "This approval has already been processed.",
+            rejectConflictJson.RootElement.GetProperty("message").GetString());
     }
 
     [Theory]
