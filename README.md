@@ -48,8 +48,8 @@ This design demonstrates how AI-generated actions can be controlled through back
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-maintenance-agent.git
-cd ai-maintenance-agent
+git clone https://github.com/Ever01HK/MaintenanceReqAgent.git
+cd MaintenanceReqAgent
 ```
 
 ### 2. Configure PostgreSQL
