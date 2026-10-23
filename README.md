@@ -225,7 +225,7 @@ Note: frontend automated tests and E2E browser automation are not implemented ye
 ## Future Improvements
 
 - Add frontend unit/integration tests (React Testing Library + Vitest).
-- Add E2E tests for tenant-to-manager flow.
-- Add authN/authZ for role-based tenant/manager actions.
+- Add E2E tests for the tenant-to-manager workflow.
+- Implement API authentication and authorisation (AuthN/AuthZ) to secure API requests, enforce role-based access control (RBAC), and restrict tenant and manager operations to authorised users.
 - Add structured audit logging and approval history endpoints.
-- Add CI pipeline to run tests and lint checks on pull requests.
+- Add a CI pipeline to run automated tests and lint checks on pull requests.
