@@ -1,0 +1,20 @@
+services:
+ postgres:
+    image: postgres:17
+    container_name: maintenance-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: maintenance_db
+      POSTGRES_USER: maintenance_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maintenance_user -d maintenance_db"]
+      interval: 5s
+      timeout: 5s
+
+volumes:
+  postgres_data:

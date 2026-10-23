@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/MaintenanceAgent.Api.Tests/MaintenanceAgent.Api.Tests.csproj" />
+    <Project Path="backend/MaintenanceAgent.Api/MaintenanceAgent.Api.csproj" />
+  </Folder>
+</Solution>
